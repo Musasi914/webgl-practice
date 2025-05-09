@@ -1,0 +1,77 @@
+
+描画には
+gl.drawArrays()
+gl.drawElements()
+を使う
+
+まずプリミティブを学ぶ
+上の２つの第一引数に渡せるものだ
+
+プリミティブ
+・三角形
+・線分
+・ポイントスプライト
+
+１，三角形
+kihonntekina 
+birudhinguburokku 
+
+countは頂点の数
+
+gl.TRIANGLES　　　　　　count / 3 個数描画
+gl.TRIANGLE_STRIP　　　　count - 2 個数描画
+gl.TRIANGLE_FAN　　count - 2 個数描画
+
+２，線分
+gl.LINES
+gl.LINE_STRIP
+gl.LINE_LOOP
+
+３，ポイントスプライト
+gl.POINTS
+
+パーティクル効果でよく使う
+
+///////
+ワインディングオーダー（回り順）
+反時計回り(CCW)か、
+時計回り(CW)か
+
+見るものに対して
+表の面（フロントシェーディング）か
+裏の面バックフェーシングかの
+判定に使われる
+
+バックフェーシングはラスタ化する必要がない
+シーンに背面が見えないオブジェクトがある時見えない麺をカリングするようwebglに伝えることができる
+
+gl.frontFace(gl.CCW)  // default 回り順がCCWがフロントシェーディング
+gl.enable(gl.CULL_FACE)　// 面によるカリング
+gl.cullFace(gl.BACK) // default
+
+
+///////
+描画メソッド
+
+gl.drawArrays
+gl.drawElements
+gl.clear // gl.clearColor()で指定した色ですべてのピクセルをクリア
+
+・gl.drawArrays(mode , first 、count)
+mode プリミティブ
+first 頂点データ配列の家何個目から使うか
+count 何個の頂点を使うか
+
+・gl.drawElements()
+インデックス描画と呼ばれる
+さらに頂点の再利用を増進する方法と考えられる
+gl.drawArrays 配列バッファ　
+gl.drawElements 配列バッファと要素配列バッファ
+
+//////
+
+頂点データのインターリーブで性能改善
+頂点データは頂点一以外のデータも含むのが普通
+
+それぞれの方の頂点データを別々の配列として格納する。　頂点の位置 / 法線 とか配列に分ける
+すべての頂点データを１この配列に格納する。　同じ配列の中でインターリープさせる。　構造体の配列と呼ばれる
