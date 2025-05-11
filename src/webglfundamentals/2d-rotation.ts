@@ -1,5 +1,5 @@
-import fragmentShaderSource from "/shader/webglfundamentals/2d-translation/fragmentShader.glsl?raw";
-import vertexShaderSource from "/shader/webglfundamentals/2d-translation/vertexShader.glsl?raw";
+import fragmentShaderSource from "/shader/webglfundamentals/2d-rotation/fragmentShader.glsl?raw";
+import vertexShaderSource from "/shader/webglfundamentals/2d-rotation/vertexShader.glsl?raw";
 import { WebGLBasicUtility } from "../WebGLUtil";
 
 const canvas = document.querySelector("#myGLCanvas") as HTMLCanvasElement;
@@ -12,13 +12,17 @@ const vertexPositionAttribLocation = gl.getAttribLocation(shaderProgram, "a_posi
 const vertexColorUniformLocation = gl.getUniformLocation(shaderProgram, "u_color");
 const resolutionUniformLocation = gl.getUniformLocation(shaderProgram, "u_resolution");
 const translationLocation = gl.getUniformLocation(shaderProgram, "u_translation");
+const rotationLocation = gl.getUniformLocation(shaderProgram, "u_rotation");
 
 const positionBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-const translation = [100, 200];
 const width = 100;
 const height = 30;
 const color = [Math.random(), Math.random(), Math.random(), 1];
+const translation = [100, 200];
+
+const radian = (90 * Math.PI) / 180;
+const rotation = [Math.cos(radian), Math.sin(radian)];
 
 // 「F」を描画
 gl.bufferData(
@@ -44,8 +48,11 @@ gl.enableVertexAttribArray(vertexPositionAttribLocation);
 gl.vertexAttribPointer(vertexPositionAttribLocation, 2, gl.FLOAT, false, 0, 0);
 
 gl.uniform2f(resolutionUniformLocation, canvas.width, canvas.height);
-gl.uniform2fv(translationLocation, translation);
 gl.uniform4fv(vertexColorUniformLocation, color);
+// 移動距離
+gl.uniform2fv(translationLocation, translation);
+// 回転角
+gl.uniform2fv(rotationLocation, rotation);
 
 gl.drawArrays(gl.TRIANGLES, 0, 18);
 

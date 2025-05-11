@@ -1,3 +1,16 @@
+// 以下コピペ
+// const canvas = document.querySelector("#myGLCanvas") as HTMLCanvasElement;
+
+// const util = new WebGLBasicUtility(canvas, vertexShaderSource, fragmentShaderSource);
+// const gl = util.gl;
+// const shaderProgram = util.shaderProgram;
+
+// const PositionLocation = gl.getAttribLocation(shaderProgram, "");
+
+// // buffer
+
+// // draw
+
 export class WebGLBasicUtility {
   canvas: HTMLCanvasElement;
   gl: WebGLRenderingContext;

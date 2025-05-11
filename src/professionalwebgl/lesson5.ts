@@ -54,12 +54,14 @@ function draw(elapsedTime_ms: number) {
   // fps
   requestId = requestAnimationFrame(draw);
 
-  if (elapsedTime_ms - previousFrameTime >= 1000) {
-    fpsCounter.innerHTML = `${numOfFramesForFPS}`;
-    numOfFramesForFPS = 0;
-    previousFrameTime = elapsedTime_ms;
+  if (fpsCounter) {
+    if (elapsedTime_ms - previousFrameTime >= 1000) {
+      fpsCounter.innerHTML = `${numOfFramesForFPS}`;
+      numOfFramesForFPS = 0;
+      previousFrameTime = elapsedTime_ms;
+    }
+    numOfFramesForFPS++;
   }
-  numOfFramesForFPS++;
 
   //
   if (pressedKeys.ArrowUp) {
@@ -492,7 +494,7 @@ function textureFinishedLoading(image: HTMLImageElement, texture: WebGLTexture) 
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.MIRRORED_REPEAT);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.MIRRORED_REPEAT);
 
-  gl.bindTexture(gl.TEXTURE_2D, null);
+  // gl.bindTexture(gl.TEXTURE_2D, null);
 }
 
 function handleContextLost(e: Event) {
