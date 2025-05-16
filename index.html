@@ -5,10 +5,22 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vite + TS</title>
-    <script type="module" src="/src/webglfundamentals/texture-test.ts"></script>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      canvas {
+        display: block;
+        width: 100%;
+        height: 100vh;
+      }
+    </style>
+    <script type="module" src="/src/webglfundamentals/pointLight.ts"></script>
   </head>
   <body>
-    <canvas id="myGLCanvas" width="500" height="500"></canvas>
+    <canvas id="myGLCanvas"></canvas>
     <!-- <p>FPS: <span class="fpsCounter">--</span></p> -->
   </body>
 </html>
