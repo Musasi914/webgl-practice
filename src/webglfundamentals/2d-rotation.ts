@@ -16,8 +16,8 @@ const rotationLocation = gl.getUniformLocation(shaderProgram, "u_rotation");
 
 const positionBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-const width = 100;
-const height = 30;
+// const width = 100;
+// const height = 30;
 const color = [Math.random(), Math.random(), Math.random(), 1];
 const translation = [100, 200];
 
@@ -56,14 +56,14 @@ gl.uniform2fv(rotationLocation, rotation);
 
 gl.drawArrays(gl.TRIANGLES, 0, 18);
 
-function randomInt(range: number) {
-  return Math.floor(Math.random() * range);
-}
+// function randomInt(range: number) {
+//   return Math.floor(Math.random() * range);
+// }
 
-function setRectangle(gl: WebGLRenderingContext, x: number, y: number, width: number, height: number) {
-  var x1 = x;
-  var x2 = x + width;
-  var y1 = y;
-  var y2 = y + height;
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([x1, y1, x2, y1, x1, y2, x1, y2, x2, y1, x2, y2]), gl.STATIC_DRAW);
-}
+// function setRectangle(gl: WebGLRenderingContext, x: number, y: number, width: number, height: number) {
+//   var x1 = x;
+//   var x2 = x + width;
+//   var y1 = y;
+//   var y2 = y + height;
+//   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([x1, y1, x2, y1, x1, y2, x1, y2, x2, y1, x2, y2]), gl.STATIC_DRAW);
+// }

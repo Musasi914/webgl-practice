@@ -90,7 +90,7 @@ function draw(elapsedTime_ms: number) {
 
   gl.uniform1i(uniformSamplerLoc, 0);
 
-  drawFloor(modelViewMatrix);
+  drawFloor();
 
   pushMatrix(modelViewMatrix, stack);
   mat4.translate(modelViewMatrix, modelViewMatrix, [0.0, 1.1, 0.0]);
@@ -162,7 +162,7 @@ function drawTable(modelViewMatrix: mat4, stack: mat4[]) {
   }
 }
 
-function drawFloor(modelViewMatrix: mat4) {
+function drawFloor() {
   // position
   gl.bindBuffer(gl.ARRAY_BUFFER, floorVertexPositionBuffer);
   gl.vertexAttribPointer(vertexPositionAttribLoc, floorVertexPosBufferData.itemSize, gl.FLOAT, false, 0, 0);

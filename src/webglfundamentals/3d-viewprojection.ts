@@ -2,7 +2,7 @@ import fragmentShaderSource from "/shader/webglfundamentals/3d-viewProjection/fr
 import vertexShaderSource from "/shader/webglfundamentals/3d-viewProjection/vertexShader.glsl?raw";
 import { WebGLBasicUtility } from "../WebGLUtil";
 import { mat4 } from "gl-matrix";
-import gsap from "gsap";
+// import gsap from "gsap";
 
 const canvas = document.querySelector("#myGLCanvas") as HTMLCanvasElement;
 

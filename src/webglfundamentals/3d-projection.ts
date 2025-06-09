@@ -2,7 +2,7 @@ import fragmentShaderSource from "/shader/webglfundamentals/3d-projection/fragme
 import vertexShaderSource from "/shader/webglfundamentals/3d-projection/vertexShader.glsl?raw";
 import { WebGLBasicUtility } from "../WebGLUtil";
 import { mat4 } from "gl-matrix";
-import gsap from "gsap";
+// import gsap from "gsap";
 
 const canvas = document.querySelector("#myGLCanvas") as HTMLCanvasElement;
 
@@ -13,7 +13,7 @@ const shaderProgram = util.shaderProgram;
 const vertexPositionAttribLocation = gl.getAttribLocation(shaderProgram, "a_position");
 const colorAttribLocation = gl.getAttribLocation(shaderProgram, "a_color");
 const matrixLocation = gl.getUniformLocation(shaderProgram, "u_matrix");
-const projectionMatrixLocation = gl.getUniformLocation(shaderProgram, "u_projectionMatrix");
+// const projectionMatrixLocation = gl.getUniformLocation(shaderProgram, "u_projectionMatrix");
 
 // buffer
 const positionBuffer = gl.createBuffer();
@@ -131,7 +131,7 @@ gl.bufferData(
 );
 
 // draw
-const radian = { x: (0 * Math.PI) / 180, y: (0 * Math.PI) / 180, z: (0 * Math.PI) / 180 };
+// const radian = { x: (0 * Math.PI) / 180, y: (0 * Math.PI) / 180, z: (0 * Math.PI) / 180 };
 // gsap.to(radian, { x: (360 * Math.PI) / 180, repeat: -1, duration: 5, ease: "none" });
 drawScene();
 
@@ -159,7 +159,7 @@ function drawScene() {
 
   const translation = [-30, 0, -400];
   // const radian = [(40 * Math.PI) / 180, (25 * Math.PI) / 180, (325 * Math.PI) / 180];
-  const scale = [1, 1, 1];
+  // const scale = [1, 1, 1];
 
   let modelViewMatrix = mat4.create();
   mat4.identity(modelViewMatrix);
