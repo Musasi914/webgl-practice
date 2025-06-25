@@ -1,17 +1,8 @@
 #version 300 es
 precision mediump float;
 
-uniform mat4 uModelViewMatrix;
-uniform mat4 uProjectionMatrix;
-
-uniform float uPointSize;
-
-in vec4 aParticle;
-
-out float vLifespan;
+in vec2 aVertexPosition;
 
 void main() {
-  gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aParticle.xyz, 1.0);
-  vLifespan = aParticle.w;
-  gl_PointSize = uPointSize * vLifespan;
+  gl_Position = vec4(aVertexPosition, 0.0, 1.0);
 }

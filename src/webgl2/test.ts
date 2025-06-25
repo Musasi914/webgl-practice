@@ -1,41 +1,13 @@
 import vertexShaderSource from "/shader/webgl2/test/vertexShader.glsl?raw";
 import fragmentShaderSource from "/shader/webgl2/test/fragmentShader.glsl?raw";
-import {
-  Camera,
-  Clock,
-  Controls,
-  Floor,
-  Light,
-  LightsManager,
-  PostProcess,
-  Program,
-  Scene,
-  Texture,
-  Transforms,
-  utils,
-} from "../WebGLUtil";
-import GUI from "lil-gui";
-import { mat4 } from "gl-matrix";
+import { Clock, Program, utils } from "../WebGLUtil";
 
 let canvas: HTMLCanvasElement;
 let gl: WebGL2RenderingContext;
-let program: Program;
-let scene: Scene;
 let clock: Clock;
-let camera: Camera;
-let controls: Controls;
-let transforms: Transforms;
-let texture: Texture;
-let postProcess: PostProcess;
+let program: Program;
 
-let particleArray: Float32Array;
-let particles: { position: [number, number, number]; velocity: [number, number, number]; lifespan: number; remaingLife: number }[] = [];
-
-let particleLifespan = 3;
-let particleSize = 14;
-let particleBuffer: WebGLBuffer;
-
-let lastFrameTime: number;
+let vao: WebGLVertexArrayObject;
 
 function init() {
   configure();
@@ -54,139 +26,59 @@ function configure() {
   gl = utils.getGL2Context(canvas);
   gl.clearColor(0.1, 0.1, 0.1, 1.0);
   gl.clearDepth(1);
-  gl.enable(gl.BLEND);
-  gl.disable(gl.DEPTH_TEST);
+  gl.enable(gl.DEPTH_TEST);
   gl.depthFunc(gl.LESS);
-  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
   program = new Program(gl, vertexShaderSource, fragmentShaderSource);
-  const attributes = ["aParticle"];
-  const uniforms = ["uModelViewMatrix", "uProjectionMatrix", "uPointSize", "uSampler"];
+  const attributes = ["aVertexPosition"];
+  const uniforms = [
+    "uResolution",
+    // "uTime"
+  ];
   program.load(attributes, uniforms);
-
-  scene = new Scene(gl, program);
 
   clock = new Clock();
 
-  camera = new Camera(Camera.ORBITING_TYPE);
-  camera.goHome([0, 0, 40]);
-  camera.setFocus([0, 0, 0]);
-  camera.setAzimuth(-30);
-  camera.setElevation(-30);
-
-  controls = new Controls(camera, canvas);
-
-  transforms = new Transforms(gl, program, camera, canvas);
-
-  texture = new Texture(gl);
-  texture.setImage("webgl2/spark.png");
-
-  configureParticles(1024);
-}
-
-function configureParticles(count: number) {
-  particleArray = new Float32Array(count * 4);
-
-  for (let i = 0; i < count; i++) {
-    const particle = {
-      position: [0, 0, 0] as [number, number, number],
-      velocity: [0, 0, 0] as [number, number, number],
-      lifespan: 0,
-      remaingLife: 0,
-    };
-    resetParticle(particle);
-    particles.push(particle);
-
-    particleArray[i * 4] = particle.position[0];
-    particleArray[i * 4 + 1] = particle.position[1];
-    particleArray[i * 4 + 2] = particle.position[2];
-    particleArray[i * 4 + 3] = particle.remaingLife / particle.lifespan;
-  }
-
-  particleBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, particleBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, particleArray, gl.STATIC_DRAW);
-  gl.bindBuffer(gl.ARRAY_BUFFER, null);
-}
-
-function resetParticle(particle: {
-  position: [number, number, number];
-  velocity: [number, number, number];
-  lifespan: number;
-  remaingLife: number;
-}) {
-  particle.position = [0, 0, 0];
-  particle.velocity = [(Math.random() - 0.5) * 20, Math.random() * 20, (Math.random() - 0.5) * 20];
-  // ↓のランダムを消すと花火みたいになるよ
-  particle.lifespan = Math.random() * particleLifespan;
-  particle.remaingLife = particle.lifespan;
-}
-
-function updateParticle(elapsed: number) {
-  particles.forEach((particle, i) => {
-    particle.remaingLife -= elapsed;
-
-    if (particle.remaingLife <= 0) {
-      resetParticle(particle);
-    }
-
-    particle.position[0] += particle.velocity[0] * elapsed;
-    particle.position[1] += particle.velocity[1] * elapsed;
-    particle.position[2] += particle.velocity[2] * elapsed;
-    particle.velocity[1] -= 9.8 * elapsed;
-    if (particle.position[1] < 0) {
-      particle.velocity[1] *= -0.75;
-      particle.position[1] = 0;
-    }
-
-    particleArray[i * 4] = particle.position[0];
-    particleArray[i * 4 + 1] = particle.position[1];
-    particleArray[i * 4 + 2] = particle.position[2];
-    particleArray[i * 4 + 3] = particle.remaingLife / particle.lifespan;
-  });
-
-  gl.bindBuffer(gl.ARRAY_BUFFER, particleBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, particleArray, gl.STATIC_DRAW);
-  gl.bindBuffer(gl.ARRAY_BUFFER, null);
+  gl.uniform2f(program.location.uniforms.uResolution, canvas.width, canvas.height);
 }
 
 function load() {
-  // scene.add(new Floor(80, 20));
-  lastFrameTime = Date.now();
+  vao = gl.createVertexArray();
+  gl.bindVertexArray(vao);
+
+  const vertex = [
+    -1.0,
+    -1.0, // 左下
+    1.0,
+    -1.0, // 右下
+    -1.0,
+    1.0, // 左上
+    -1.0,
+    1.0, // 左上
+    1.0,
+    -1.0, // 右下
+    1.0,
+    1.0, // 右上
+  ];
+  const vertexBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertex), gl.STATIC_DRAW);
+  gl.enableVertexAttribArray(program.location.attributes.aVertexPosition);
+  gl.vertexAttribPointer(program.location.attributes.aVertexPosition, 2, gl.FLOAT, false, 0, 0);
+
+  gl.bindVertexArray(null);
+  gl.bindBuffer(gl.ARRAY_BUFFER, null);
 }
 
 function draw() {
   gl.viewport(0, 0, canvas.width, canvas.height);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-  transforms.updatePerspective();
-
-  const now = Date.now();
-  updateParticle((now - lastFrameTime) / 1000);
-  lastFrameTime = now;
-
   try {
-    transforms.calculateModelView();
-    transforms.push();
+    gl.uniform1f(program.location.uniforms.uTime, performance.now());
 
-    transforms.setMatrixUniforms();
-    transforms.pop();
-
-    gl.uniform1f(program.location.uniforms.uPointSize, particleSize);
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, particleBuffer);
-    const aParticleLoc = program.location.attributes?.aParticle;
-    if (typeof aParticleLoc === "number") {
-      gl.enableVertexAttribArray(aParticleLoc);
-      gl.vertexAttribPointer(aParticleLoc, 4, gl.FLOAT, false, 0, 0);
-    }
-
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, texture.glTexture);
-    gl.uniform1i(program.location.uniforms.uSampler, 0);
-
-    gl.drawArrays(gl.POINTS, 0, particles.length);
+    gl.bindVertexArray(vao);
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
 
     gl.bindVertexArray(null);
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
